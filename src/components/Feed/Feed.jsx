@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { db } from '../../Firebase/config'
+import { db } from '../../firebase/config'
 import styles from './Feed.module.css'
 import Post from '../Post/Post'
 import CreatePost from '../CreatePost/CreatePost'

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage } from '../../FireBase/config'
+import { storage } from '../../firebase/config'
 import styles from './CreatePost.module.css'
 
 const CreatePost = ({ onClose, onSubmit }) => {
