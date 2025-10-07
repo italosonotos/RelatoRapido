@@ -4,6 +4,7 @@ import { db } from '../../firebase/config'
 import styles from './Feed.module.css'
 import Post from '../Post/Post'
 import CreatePost from '../CreatePost/CreatePost'
+import GoogleAd from '../GoogleAd/GoogleAd' // ← ADICIONE ESTA LINHA
 import { useAuth } from '../../contexts/AuthContext'
 import { 
   collection, 
@@ -17,9 +18,8 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
-  deleteDoc  // ADICIONE ESTA LINHA
+  deleteDoc
 } from 'firebase/firestore'
-
 
 const Feed = () => {
   const [posts, setPosts] = useState([])
@@ -27,7 +27,6 @@ const Feed = () => {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
-  // Busca posts em tempo real do Firestore
   useEffect(() => {
     const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'))
     
@@ -69,68 +68,63 @@ const Feed = () => {
   }
 
   const handleLike = async (postId) => {
-  try {
-    const postRef = doc(db, 'posts', postId)
-    const postDoc = await getDoc(postRef)
-    
-    if (postDoc.exists()) {
-      const postData = postDoc.data()
-      const likes = postData.likes || []
-      const hasLiked = likes.includes(user.id)
+    try {
+      const postRef = doc(db, 'posts', postId)
+      const postDoc = await getDoc(postRef)
       
-      if (hasLiked) {
-        // Remove curtida
-        await updateDoc(postRef, {
-          likes: arrayRemove(user.id)
-        })
-      } else {
-        // Adiciona curtida
-        await updateDoc(postRef, {
-          likes: arrayUnion(user.id)
-        })
+      if (postDoc.exists()) {
+        const postData = postDoc.data()
+        const likes = postData.likes || []
+        const hasLiked = likes.includes(user.id)
+        
+        if (hasLiked) {
+          await updateDoc(postRef, {
+            likes: arrayRemove(user.id)
+          })
+        } else {
+          await updateDoc(postRef, {
+            likes: arrayUnion(user.id)
+          })
+        }
       }
+    } catch (error) {
+      console.error('Erro ao curtir:', error)
     }
-  } catch (error) {
-    console.error('Erro ao curtir:', error)
   }
-}
 
   const handleAddComment = async (postId, commentText) => {
-  try {
-    const postRef = doc(db, 'posts', postId)
-    
-    const newComment = {
-      id: Date.now().toString(),
-      text: commentText,
-      userName: user.fullName,
-      userAvatar: user.avatar,
-      userId: user.id,
-      timestamp: new Date().toISOString()
+    try {
+      const postRef = doc(db, 'posts', postId)
+      
+      const newComment = {
+        id: Date.now().toString(),
+        text: commentText,
+        userName: user.fullName,
+        userAvatar: user.avatar,
+        userId: user.id,
+        timestamp: new Date().toISOString()
+      }
+      
+      await updateDoc(postRef, {
+        comments: arrayUnion(newComment)
+      })
+      
+      console.log('Comentário adicionado com sucesso!')
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error)
+      alert('Erro ao adicionar comentário. Tente novamente.')
     }
-    
-    await updateDoc(postRef, {
-      comments: arrayUnion(newComment)
-    })
-    
-    console.log('Comentário adicionado com sucesso!')
-  } catch (error) {
-    console.error('Erro ao adicionar comentário:', error)
-    alert('Erro ao adicionar comentário. Tente novamente.')
   }
-}
 
- // Função para deletar post - ATUALIZADA
-const handleDeletePost = async (postId) => {
-  try {
-    // Deleta do Firebase
-    await deleteDoc(doc(db, 'posts', postId))
-    console.log('Post deletado com sucesso!')
-  } catch (error) {
-    console.error('Erro ao deletar post:', error)
-    alert('Erro ao deletar o post. Tente novamente.')
+  const handleDeletePost = async (postId) => {
+    try {
+      await deleteDoc(doc(db, 'posts', postId))
+      console.log('Post deletado com sucesso!')
+    } catch (error) {
+      console.error('Erro ao deletar post:', error)
+      alert('Erro ao deletar o post. Tente novamente.')
+    }
   }
-}
-
 
   return (
     <div className={styles.container}>
@@ -173,20 +167,33 @@ const handleDeletePost = async (postId) => {
       )}
 
       <div className={styles.feed}>
+        {/* ANÚNCIO NO TOPO DO FEED */}
+        <div className={styles.adContainer}>
+          <GoogleAd slot="SEU_SLOT_ID" format="horizontal" />
+        </div>
+
         {posts.length === 0 ? (
           <div className={styles.emptyState}>
             <p>Nenhum post ainda. Seja o primeiro a compartilhar!</p>
           </div>
         ) : (
-          posts.map(post => (
-            <Post
-              key={post.id}
-              post={post}
-              currentUserId={user.id}
-              onLike={handleLike}
-              onAddComment={handleAddComment}
-              onDelete={handleDeletePost}
-            />
+          posts.map((post, index) => (
+            <React.Fragment key={post.id}>
+              <Post
+                post={post}
+                currentUserId={user.id}
+                onLike={handleLike}
+                onAddComment={handleAddComment}
+                onDelete={handleDeletePost}
+              />
+              
+              {/* ANÚNCIO A CADA 5 POSTS */}
+              {(index + 1) % 5 === 0 && index < posts.length - 1 && (
+                <div className={styles.adContainer}>
+                  <GoogleAd slot="SEU_SLOT_ID" />
+                </div>
+              )}
+            </React.Fragment>
           ))
         )}
       </div>
