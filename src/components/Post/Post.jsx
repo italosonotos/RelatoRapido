@@ -1,21 +1,13 @@
-// Importações necessárias
 import React, { useState } from 'react'
 import styles from './Post.module.css'
 
 const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
-  // Estado para controlar a visibilidade dos comentários
   const [showComments, setShowComments] = useState(false)
-  
-  // Estado para o texto do novo comentário
   const [commentText, setCommentText] = useState('')
 
-  // Verifica se o usuário atual curtiu o post
   const hasLiked = post.likes.includes(currentUserId)
-
-  // Verifica se o usuário atual é o autor do post
   const isPostAuthor = post.userId === currentUserId
 
-  // Formata a data do post
   const formatDate = (date) => {
     const now = new Date()
     const postDate = new Date(date)
@@ -31,7 +23,6 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
     return postDate.toLocaleDateString('pt-BR')
   }
 
-  // Função para adicionar comentário
   const handleSubmitComment = (e) => {
     e.preventDefault()
     if (commentText.trim()) {
@@ -40,7 +31,6 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
     }
   }
 
-  // Função para excluir o post
   const handleDelete = () => {
     if (window.confirm('Tem certeza que deseja excluir este post?')) {
       onDelete(post.id)
@@ -48,14 +38,14 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
   }
 
   return (
-    <div className={styles.postContainer}>
-      {/* Header do post com informações do usuário */}
+    <div className="card">
+      {/* Header do post */}
       <div className={styles.postHeader}>
         <div className={styles.postHeaderLeft}>
           <img 
             src={post.userAvatar} 
             alt={post.userName}
-            className={styles.avatar}
+            className="avatar avatar-md"
           />
           <div className={styles.userInfo}>
             <span className={styles.userName}>{post.userName}</span>
@@ -63,13 +53,12 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
           </div>
         </div>
 
-        {/* Botão de excluir (apenas para o autor do post) */}
+        {/* Botão de excluir */}
         {isPostAuthor && (
           <button 
-            className={styles.deleteButton}
+            className={`btn-ghost ${styles.deleteButton}`}
             onClick={handleDelete}
             aria-label="Excluir post"
-            
           >
             <svg 
               width="20" 
@@ -90,12 +79,10 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
 
       {/* Conteúdo do post */}
       <div className={styles.postContent}>
-        {/* Texto do post */}
         {post.content && (
           <p className={styles.postText}>{post.content}</p>
         )}
 
-        {/* Imagem do post (se houver) */}
         {post.type === 'image' && post.imageUrl && (
           <img 
             src={post.imageUrl} 
@@ -105,9 +92,8 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
         )}
       </div>
 
-      {/* Ações do post (curtir e comentar) */}
+      {/* Ações do post */}
       <div className={styles.postActions}>
-        {/* Botão de curtir */}
         <button 
           className={`${styles.actionButton} ${hasLiked ? styles.liked : ''}`}
           onClick={() => onLike(post.id)}
@@ -125,7 +111,6 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
           <span>{post.likes.length}</span>
         </button>
 
-        {/* Botão de comentar */}
         <button 
           className={styles.actionButton}
           onClick={() => setShowComments(!showComments)}
@@ -147,7 +132,6 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
       {/* Seção de comentários */}
       {showComments && (
         <div className={styles.commentsSection}>
-          {/* Lista de comentários */}
           {post.comments && post.comments.length > 0 && (
             <div className={styles.commentsList}>
               {post.comments.map(comment => (
@@ -155,7 +139,7 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
                   <img 
                     src={comment.userAvatar} 
                     alt={comment.userName}
-                    className={styles.commentAvatar}
+                    className="avatar avatar-sm"
                   />
                   <div className={styles.commentContent}>
                     <span className={styles.commentUserName}>{comment.userName}</span>
@@ -166,18 +150,17 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
             </div>
           )}
 
-          {/* Formulário para adicionar comentário */}
           <form onSubmit={handleSubmitComment} className={styles.commentForm}>
             <input
               type="text"
               placeholder="Adicione um comentário..."
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              className={styles.commentInput}
+              className="input"
             />
             <button 
               type="submit"
-              className={styles.commentSubmit}
+              className="btn btn-primary btn-sm"
               disabled={!commentText.trim()}
             >
               Publicar

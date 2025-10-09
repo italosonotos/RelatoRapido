@@ -1,15 +1,14 @@
 /* Container principal */
 .container {
   min-height: 100vh;
-  background-color: #fafafa;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-bg);
 }
 
 /* Header */
 .header {
-  background-color: #ffffff;
-  border-bottom: 1px solid #dbdbdb;
-  padding: 15px 20px;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,143 +18,48 @@
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
+  color: var(--color-primary);
   margin: 0;
-  color: #262626;
 }
 
-.createButton {
-  background-color: #0095f6;
-  color: #ffffff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.createButton:hover {
-  background-color: #1877f2;
-}
-
-/* Feed de posts */
-.feed {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 0 20px;
-}
-
-/* Estado vazio */
-.emptyState {
-  background-color: #ffffff;
-  border: 1px solid #dbdbdb;
-  border-radius: 8px;
-  padding: 40px 20px;
-  text-align: center;
-  color: #8e8e8e;
-  font-size: 16px;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .logo {
-    font-size: 20px;
-  }
-
-  .createButton {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-
-  .feed {
-    padding: 0 10px;
-  }
-}
-
-/* Header actions - área direita do header */
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--spacing-lg);
 }
 
-/* Informações do usuário no header */
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.userAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #dbdbdb;
+  gap: var(--spacing-sm);
 }
 
 .userName {
-  font-size: 14px;
   font-weight: 600;
-  color: #262626;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
 }
 
-/* Botão de logout */
-.logoutButton {
-  background-color: transparent;
-  color: #ed4956;
-  border: 1px solid #ed4956;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.logoutButton:hover {
-  background-color: #ed4956;
-  color: #ffffff;
-}
-
-/* Container para os anúncios */
-.adContainer {
-  margin: 1.5rem auto;
-  padding: 1rem;
+/* Feed */
+.feed {
   max-width: 600px;
-  background: #fafafa;
-  border-radius: 8px;
-  border: 1px solid #e5e5e5;
-  min-height: 250px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  flex-direction: column;
+  gap: var(--spacing-lg);
 }
 
-/* Label "Publicidade" */
-.adContainer::before {
-  content: "Publicidade";
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  font-size: 10px;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Container para os anúncios */
+/* Container para anúncios */
 .adContainer {
-  margin: 1.5rem auto;
-  padding: 1rem;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-md);
   max-width: 600px;
-  background: #fafafa;
-  border-radius: 8px;
-  border: 1px solid #e5e5e5;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
   min-height: 250px;
   display: flex;
   justify-content: center;
@@ -169,46 +73,32 @@
   top: 8px;
   left: 8px;
   font-size: 10px;
-  color: #999;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-secondary);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .adContainer {
-    margin: 1rem;
-    padding: 0.75rem;
-    min-height: 200px;
+  .header {
+    padding: var(--spacing-sm) var(--spacing-md);
   }
-}
 
-/* Responsividade */
-@media (max-width: 768px) {
   .headerActions {
-    gap: 10px;
+    gap: var(--spacing-sm);
   }
 
   .userName {
-    display: none; /* Esconde nome em telas pequenas */
+    display: none;
   }
 
-  .createButton {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-
-  .logoutButton {
-    padding: 5px 10px;
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 12px 15px;
-  }
-
-  .logo {
-    font-size: 18px;
+  .feed {
+    padding: var(--spacing-md);
   }
 }

@@ -4,8 +4,9 @@ import { db } from '../../firebase/config'
 import styles from './Feed.module.css'
 import Post from '../Post/Post'
 import CreatePost from '../CreatePost/CreatePost'
-import GoogleAd from '../GoogleAd/GoogleAd' // ← ADICIONE ESTA LINHA
+import GoogleAd from '../GoogleAd/GoogleAd'
 import { useAuth } from '../../contexts/AuthContext'
+import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import { 
   collection, 
   addDoc, 
@@ -127,13 +128,15 @@ const Feed = () => {
   }
 
   return (
+
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.logo}>Relato Rápido</h1>
         
         <div className={styles.headerActions}>
+        <ThemeToggle />
           <button 
-            className={styles.createButton}
+            className="btn btn-primary"
             onClick={() => setShowCreatePost(true)}
           >
             + Novo Post
@@ -143,7 +146,7 @@ const Feed = () => {
             <img 
               src={user.avatar} 
               alt={user.fullName}
-              className={styles.userAvatar}
+              className="avatar avatar-md"
               onClick={() => navigate('/profile')}
               style={{ cursor: 'pointer' }}
             />
@@ -151,7 +154,7 @@ const Feed = () => {
           </div>
           
           <button 
-            className={styles.logoutButton}
+            className="btn btn-danger btn-sm"
             onClick={handleLogout}
           >
             Sair
@@ -168,9 +171,11 @@ const Feed = () => {
 
       <div className={styles.feed}>
         {/* ANÚNCIO NO TOPO DO FEED */}
+        {/* Feed de posts 
         <div className={styles.adContainer}>
           <GoogleAd slot="SEU_SLOT_ID" format="horizontal" />
-        </div>
+        </div>*/}
+        
 
         {posts.length === 0 ? (
           <div className={styles.emptyState}>

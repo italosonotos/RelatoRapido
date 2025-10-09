@@ -4,12 +4,10 @@ import styles from './Home.module.css';
 
 export default function Home() {
   const handleEntrar = () => {
-    // Navegar para /login
     window.location.href = '/login';
   };
 
   const handleCriarConta = () => {
-    // Navegar para /cadastro
     window.location.href = '/cadastro';
   };
 
@@ -18,12 +16,10 @@ export default function Home() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.logo}>
-            Relato Rápido
-          </h1>
+          <h1 className={styles.logo}>Relato Rápido</h1>
           <button 
             onClick={handleEntrar}
-            className={styles.headerButton}
+            className="btn btn-ghost"
           >
             Entrar
           </button>
@@ -35,15 +31,13 @@ export default function Home() {
         <div className={styles.hero}>
           {/* Icon */}
           <div className={styles.iconContainer}>
-            <MessageSquare className="w-8 h-8 md:w-10 md:h-10 text-white" />
+            <MessageSquare size={40} color="white" />
           </div>
 
           {/* Title */}
           <h2 className={styles.title}>
             Compartilhe seus relatos<br />
-            <span className={styles.titleGradient}>
-              e experiências
-            </span>
+            <span className={styles.titleGradient}>e experiências</span>
           </h2>
 
           {/* Description */}
@@ -57,16 +51,10 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className={styles.ctaButtons}>
-            <button
-              onClick={handleEntrar}
-              className={styles.primaryButton}
-            >
+            <button onClick={handleEntrar} className="btn btn-primary btn-lg">
               Entrar
             </button>
-            <button
-              onClick={handleCriarConta}
-              className={styles.secondaryButton}
-            >
+            <button onClick={handleCriarConta} className="btn btn-outline btn-lg">
               Criar Conta
             </button>
           </div>
@@ -75,39 +63,33 @@ export default function Home() {
         {/* Features */}
         <div className={styles.features}>
           {/* Feature 1 */}
-          <div className={`${styles.featureCard} ${styles.featureCard1}`}>
-            <div className={`${styles.featureIcon} ${styles.featureIcon1}`}>
-              <Users className="w-6 h-6 md:w-7 md:h-7 text-blue-600" />
+          <div className="card">
+            <div className={styles.featureIcon} style={{ backgroundColor: '#dbeafe' }}>
+              <Users size={28} color="#2563eb" />
             </div>
-            <h3 className={styles.featureTitle}>
-              Conecte-se com pessoas
-            </h3>
+            <h3 className={styles.featureTitle}>Conecte-se com pessoas</h3>
             <p className={styles.featureDescription}>
               Encontre e interaja com moradores da sua região que compartilham as mesmas experiências.
             </p>
           </div>
 
           {/* Feature 2 */}
-          <div className={`${styles.featureCard} ${styles.featureCard2}`}>
-            <div className={`${styles.featureIcon} ${styles.featureIcon2}`}>
-              <MapPin className="w-6 h-6 md:w-7 md:h-7 text-purple-600" />
+          <div className="card">
+            <div className={styles.featureIcon} style={{ backgroundColor: '#f3e8ff' }}>
+              <MapPin size={28} color="#9333ea" />
             </div>
-            <h3 className={styles.featureTitle}>
-              Descubra sua região
-            </h3>
+            <h3 className={styles.featureTitle}>Descubra sua região</h3>
             <p className={styles.featureDescription}>
               Fique por dentro do que está acontecendo perto de você em tempo real.
             </p>
           </div>
 
           {/* Feature 3 */}
-          <div className={`${styles.featureCard} ${styles.featureCard3}`}>
-            <div className={`${styles.featureIcon} ${styles.featureIcon3}`}>
-              <TrendingUp className="w-6 h-6 md:w-7 md:h-7 text-pink-600" />
+          <div className="card">
+            <div className={styles.featureIcon} style={{ backgroundColor: '#fce7f3' }}>
+              <TrendingUp size={28} color="#ec4899" />
             </div>
-            <h3 className={styles.featureTitle}>
-              Compartilhe histórias
-            </h3>
+            <h3 className={styles.featureTitle}>Compartilhe histórias</h3>
             <p className={styles.featureDescription}>
               Dê voz às suas experiências e faça sua opinião ser ouvida pela comunidade.
             </p>
@@ -116,16 +98,11 @@ export default function Home() {
 
         {/* Bottom CTA */}
         <div className={styles.bottomCta}>
-          <h3 className={styles.bottomCtaTitle}>
-            Pronto para começar?
-          </h3>
+          <h3 className={styles.bottomCtaTitle}>Pronto para começar?</h3>
           <p className={styles.bottomCtaDescription}>
             Junte-se à comunidade e comece a compartilhar suas experiências hoje mesmo.
           </p>
-          <button
-            onClick={handleCriarConta}
-            className={styles.bottomCtaButton}
-          >
+          <button onClick={handleCriarConta} className="btn btn-primary btn-lg">
             Criar Conta Grátis
           </button>
         </div>
