@@ -130,3 +130,32 @@
     font-size: 0.875rem;
   }
 }
+
+.locationSection {
+  margin: 0.5rem 0;
+}
+
+.locationLabel {
+  font-size: 14px;
+  color: #65676b;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.locationRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.5rem;
+}
+
+/* Dark mode */
+:global(.dark-mode) .locationLabel {
+  color: #b0b3b8;
+}
+
+/* Responsivo */
+@media (max-width: 576px) {
+  .locationRow {
+    grid-template-columns: 1fr;
+  }
+}

@@ -4,9 +4,16 @@ import { db } from '../../firebase/config'
 import styles from './Feed.module.css'
 import Post from '../Post/Post'
 import CreatePost from '../CreatePost/CreatePost'
+import QuickPost from '../QuickPost/QuickPost'
+import SearchUsers from '../SearchUsers/SearchUsers'
 import GoogleAd from '../GoogleAd/GoogleAd'
 import { useAuth } from '../../contexts/AuthContext'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
+import { 
+  Plus, 
+  LogOut, 
+  User
+} from 'lucide-react'
 import { 
   collection, 
   addDoc, 
@@ -57,6 +64,7 @@ const Feed = () => {
         type: newPost.type,
         content: newPost.content,
         imageUrl: newPost.imageUrl,
+        location: newPost.location,
         likes: [],
         timestamp: serverTimestamp()
       })
@@ -128,37 +136,49 @@ const Feed = () => {
   }
 
   return (
-
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.logo}>Relato Rápido</h1>
         
+        {/* Barra de pesquisa no header */}
+        <SearchUsers />
+        
         <div className={styles.headerActions}>
-        <ThemeToggle />
-          <button 
-            className="btn btn-primary"
-            onClick={() => setShowCreatePost(true)}
-          >
-            + Novo Post
-          </button>
+          <ThemeToggle />
           
-          <div className={styles.userInfo}>
+          <div className={styles.iconButtons}>
+            <button 
+              className={styles.iconButton}
+              onClick={() => setShowCreatePost(true)}
+              title="Criar Post"
+            >
+              <Plus size={20} />
+            </button>
+            
+            <button 
+              className={styles.iconButton}
+              onClick={() => navigate('/profile')}
+              title="Perfil"
+            >
+              <User size={20} />
+            </button>
+            
+            <button 
+              className={styles.iconButton}
+              onClick={handleLogout}
+              title="Sair"
+            >
+              <LogOut size={20} />
+            </button>
+          </div>
+          
+          <div className={styles.userAvatar}>
             <img 
               src={user.avatar} 
               alt={user.fullName}
-              className="avatar avatar-md"
               onClick={() => navigate('/profile')}
-              style={{ cursor: 'pointer' }}
             />
-            <span className={styles.userName}>{user.fullName}</span>
           </div>
-          
-          <button 
-            className="btn btn-danger btn-sm"
-            onClick={handleLogout}
-          >
-            Sair
-          </button>
         </div>
       </div>
 
@@ -170,12 +190,8 @@ const Feed = () => {
       )}
 
       <div className={styles.feed}>
-        {/* ANÚNCIO NO TOPO DO FEED */}
-        {/* Feed de posts 
-        <div className={styles.adContainer}>
-          <GoogleAd slot="SEU_SLOT_ID" format="horizontal" />
-        </div>*/}
-        
+        {/* Campo "No que você está pensando?" */}
+        <QuickPost onOpenCreatePost={() => setShowCreatePost(true)} />
 
         {posts.length === 0 ? (
           <div className={styles.emptyState}>
@@ -192,7 +208,6 @@ const Feed = () => {
                 onDelete={handleDeletePost}
               />
               
-              {/* ANÚNCIO A CADA 5 POSTS */}
               {(index + 1) % 5 === 0 && index < posts.length - 1 && (
                 <div className={styles.adContainer}>
                   <GoogleAd slot="SEU_SLOT_ID" />

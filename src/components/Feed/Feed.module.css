@@ -6,15 +6,29 @@
 
 /* Header */
 .header {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+  }
+  
+  /* Coloca a busca em uma linha separada no mobile */
+  .header > :nth-child(2) {
+    order: 3;
+    flex-basis: 100%;
+    margin-top: 0.5rem;
+  }
 }
 
 .logo {
@@ -83,6 +97,110 @@
   padding: var(--spacing-2xl);
   color: var(--color-text-secondary);
 }
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Botões circulares estilo Facebook */
+.iconButtons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e4e6eb;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #050505;
+}
+
+.iconButton:hover {
+  background-color: #d8dadf;
+  transform: scale(1.05);
+}
+
+.iconButton:active {
+  transform: scale(0.95);
+}
+
+/* Dark mode */
+:global(.dark-mode) .iconButton {
+  background-color: #3a3b3c;
+  color: #e4e6eb;
+}
+
+:global(.dark-mode) .iconButton:hover {
+  background-color: #4e4f50;
+}
+
+/* Avatar do usuário */
+.userAvatar {
+  position: relative;
+}
+
+.userAvatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.userAvatar img:hover {
+  border-color: #1877f2;
+  transform: scale(1.05);
+}
+
+/* Badge de notificação (opcional) */
+.iconButton.hasNotification::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  background-color: #f02849;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .iconButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .userAvatar img {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .headerActions {
+    gap: 0.5rem;
+  }
+}
+
+/* Ocultar texto do nome em telas pequenas */
+@media (max-width: 576px) {
+  .userName {
+    display: none;
+  }
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {

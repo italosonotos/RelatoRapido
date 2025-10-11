@@ -6,7 +6,15 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged
 } from 'firebase/auth'
-import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { 
+  doc, 
+  setDoc, 
+  getDoc, 
+  collection, 
+  query, 
+  where, 
+  getDocs
+} from 'firebase/firestore'
 import { auth, db } from '../firebase/config'
 
 const AuthContext = createContext({})
@@ -46,42 +54,69 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   // Função de cadastro
-const signUp = async (userData) => {
-  try {
-    // Cria usuário no Firebase Auth
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      userData.email,
-      userData.password
-    )
+  const signUp = async ({ email, fullName, username, password, city, state, neighborhood }) => {
+    try {
+      // Verifica se o username já existe
+      const usersRef = collection(db, 'users')
+      const usernameQuery = query(usersRef, where('username', '==', username))
+      const usernameSnapshot = await getDocs(usernameQuery)
 
-    // Salva dados adicionais no Firestore
-    await setDoc(doc(db, 'users', userCredential.user.uid), {
-      fullName: userData.fullName,
-      username: userData.username,
-      email: userData.email,
-      avatar: 'https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff',
-      createdAt: new Date().toISOString()
-    })
+      if (!usernameSnapshot.empty) {
+        return { success: false, error: 'Este nome de usuário já está em uso!' }
+      }
 
-    return { success: true }
-  } catch (error) {
-    console.error('Erro completo no signUp:', error) // ADICIONE ESTA LINHA
-    console.error('Código do erro:', error.code) // E ESTA TAMBÉM
-    
-    let errorMessage = 'Erro ao criar conta'
-    
-    if (error.code === 'auth/email-already-in-use') {
-      errorMessage = 'Este email já está em uso'
-    } else if (error.code === 'auth/weak-password') {
-      errorMessage = 'A senha deve ter pelo menos 6 caracteres'
-    } else if (error.code === 'auth/invalid-email') {
-      errorMessage = 'Email inválido'
+      // ⬇️ ESTA LINHA ESTAVA FALTANDO ⬇️
+      // Cria usuário no Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const firebaseUser = userCredential.user
+      // ⬆️ ESTA LINHA ESTAVA FALTANDO ⬆️
+
+      // Avatar aleatório
+      const avatarNumber = Math.floor(Math.random() * 10) + 1
+      const avatar = `https://i.pravatar.cc/150?img=${avatarNumber}`
+
+      // Dados do usuário para o Firestore
+      const userData = {
+        email,
+        fullName,
+        username,
+        avatar,
+        city: city || null,
+        state: state || null,
+        neighborhood: neighborhood || null,
+        bio: '',
+        createdAt: new Date().toISOString()
+      }
+
+      // Salva dados no Firestore usando o UID do Firebase Auth
+      await setDoc(doc(db, 'users', firebaseUser.uid), userData)
+
+      // Atualiza o estado
+      setUser({
+        id: firebaseUser.uid,
+        ...userData
+      })
+
+      return { success: true }
+    } catch (error) {
+      console.error('Erro no cadastro:', error)
+      
+      let errorMessage = 'Erro ao criar conta. Tente novamente.'
+      
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Este email já está em uso!'
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email inválido!'
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'A senha deve ter no mínimo 6 caracteres!'
+      }
+      
+      return { 
+        success: false, 
+        error: errorMessage
+      }
     }
-    
-    return { success: false, error: errorMessage }
   }
-}
 
   // Função de login
   const signIn = async (email, password) => {
@@ -95,6 +130,8 @@ const signUp = async (userData) => {
         errorMessage = 'Email ou senha incorretos'
       } else if (error.code === 'auth/invalid-email') {
         errorMessage = 'Email inválido'
+      } else if (error.code === 'auth/invalid-credential') {
+        errorMessage = 'Email ou senha incorretos'
       }
       
       return { success: false, error: errorMessage }

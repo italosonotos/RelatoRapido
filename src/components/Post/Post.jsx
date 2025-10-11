@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styles from './Post.module.css'
+import { MapPin } from 'lucide-react'
 
 const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
   const [showComments, setShowComments] = useState(false)
@@ -42,28 +43,39 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
       {/* Header do post */}
       <div className={styles.postHeader}>
         <div className={styles.postHeaderLeft}>
-          <img 
-            src={post.userAvatar} 
+          <img
+            src={post.userAvatar}
             alt={post.userName}
             className="avatar avatar-md"
           />
           <div className={styles.userInfo}>
             <span className={styles.userName}>{post.userName}</span>
-            <span className={styles.timestamp}>{formatDate(post.timestamp)}</span>
+            <div className={styles.postMeta}>
+              <span className={styles.timestamp}>{formatDate(post.timestamp)}</span>
+              {post.location && (
+                <>
+                  <span className={styles.dot}>•</span>
+                  <span className={styles.location}>
+                    <MapPin size={12} />
+                    {post.location}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Botão de excluir */}
         {isPostAuthor && (
-          <button 
+          <button
             className={`btn-ghost ${styles.deleteButton}`}
             onClick={handleDelete}
             aria-label="Excluir post"
           >
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -79,14 +91,12 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
 
       {/* Conteúdo do post */}
       <div className={styles.postContent}>
-        {post.content && (
-          <p className={styles.postText}>{post.content}</p>
-        )}
+        {post.content && <p className={styles.postText}>{post.content}</p>}
 
         {post.type === 'image' && post.imageUrl && (
-          <img 
-            src={post.imageUrl} 
-            alt="Post" 
+          <img
+            src={post.imageUrl}
+            alt="Post"
             className={styles.postImage}
           />
         )}
@@ -94,16 +104,16 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
 
       {/* Ações do post */}
       <div className={styles.postActions}>
-        <button 
+        <button
           className={`${styles.actionButton} ${hasLiked ? styles.liked : ''}`}
           onClick={() => onLike(post.id)}
         >
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill={hasLiked ? "#ed4956" : "none"}
-            stroke={hasLiked ? "#ed4956" : "currentColor"}
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill={hasLiked ? '#ed4956' : 'none'}
+            stroke={hasLiked ? '#ed4956' : 'currentColor'}
             strokeWidth="2"
           >
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -111,14 +121,14 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
           <span>{post.likes.length}</span>
         </button>
 
-        <button 
+        <button
           className={styles.actionButton}
           onClick={() => setShowComments(!showComments)}
         >
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -134,10 +144,10 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
         <div className={styles.commentsSection}>
           {post.comments && post.comments.length > 0 && (
             <div className={styles.commentsList}>
-              {post.comments.map(comment => (
+              {post.comments.map((comment) => (
                 <div key={comment.id} className={styles.comment}>
-                  <img 
-                    src={comment.userAvatar} 
+                  <img
+                    src={comment.userAvatar}
                     alt={comment.userName}
                     className="avatar avatar-sm"
                   />
@@ -158,7 +168,7 @@ const Post = ({ post, currentUserId, onLike, onAddComment, onDelete }) => {
               onChange={(e) => setCommentText(e.target.value)}
               className="input"
             />
-            <button 
+            <button
               type="submit"
               className="btn btn-primary btn-sm"
               disabled={!commentText.trim()}

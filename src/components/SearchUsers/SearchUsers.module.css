@@ -1,0 +1,150 @@
+.searchContainer {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.searchBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f0f2f5;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  transition: background 0.2s;
+}
+
+.searchBar:focus-within {
+  background: #e4e6eb;
+}
+
+.searchIcon {
+  color: #65676b;
+  margin-right: 0.5rem;
+}
+
+.searchInput {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #050505;
+  font-size: 15px;
+}
+
+.searchInput::placeholder {
+  color: #65676b;
+}
+
+.clearButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #65676b;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.clearButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.resultsDropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.userResult {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.userResult:hover {
+  background: #f0f2f5;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-weight: 500;
+  color: #050505;
+  font-size: 15px;
+}
+
+.userEmail {
+  color: #65676b;
+  font-size: 13px;
+}
+
+.loading,
+.noResults {
+  padding: 1rem;
+  text-align: center;
+  color: #65676b;
+}
+
+/* Dark mode */
+:global(.dark-mode) .searchBar {
+  background: #3a3b3c;
+}
+
+:global(.dark-mode) .searchBar:focus-within {
+  background: #4e4f50;
+}
+
+:global(.dark-mode) .searchInput {
+  color: #e4e6eb;
+}
+
+:global(.dark-mode) .searchIcon,
+:global(.dark-mode) .clearButton {
+  color: #b0b3b8;
+}
+
+:global(.dark-mode) .resultsDropdown {
+  background: #242526;
+}
+
+:global(.dark-mode) .userResult:hover {
+  background: #3a3b3c;
+}
+
+:global(.dark-mode) .userName {
+  color: #e4e6eb;
+}
+
+:global(.dark-mode) .userEmail {
+  color: #b0b3b8;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .searchContainer {
+    max-width: 100%;
+  }
+}

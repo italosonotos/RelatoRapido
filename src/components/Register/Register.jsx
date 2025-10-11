@@ -8,6 +8,9 @@ const Register = () => {
   const [fullName, setFullName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [neighborhood, setNeighborhood] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -21,7 +24,7 @@ const Register = () => {
     setError('')
 
     if (!email || !fullName || !username || !password) {
-      setError('Por favor, preencha todos os campos!')
+      setError('Por favor, preencha todos os campos obrigatórios!')
       return
     }
 
@@ -43,7 +46,15 @@ const Register = () => {
 
     try {
       setLoading(true)
-      const result = await signUp({ email, fullName, username, password })
+      const result = await signUp({ 
+        email, 
+        fullName, 
+        username, 
+        password,
+        city: city || null,
+        state: state || null,
+        neighborhood: neighborhood || null
+      })
       
       if (result.success) {
         navigate('/feed')
@@ -114,6 +125,69 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
           />
+
+          {/* Campos de localização (opcionais) */}
+          <div className={styles.locationSection}>
+            <p className={styles.locationLabel}>
+              Localização (opcional)
+            </p>
+            
+            <div className={styles.locationRow}>
+              <input
+                type="text"
+                placeholder="Cidade"
+                className="input"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                disabled={loading}
+              />
+
+              <select
+                className="input"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">Estado</option>
+                <option value="AC">AC</option>
+                <option value="AL">AL</option>
+                <option value="AP">AP</option>
+                <option value="AM">AM</option>
+                <option value="BA">BA</option>
+                <option value="CE">CE</option>
+                <option value="DF">DF</option>
+                <option value="ES">ES</option>
+                <option value="GO">GO</option>
+                <option value="MA">MA</option>
+                <option value="MT">MT</option>
+                <option value="MS">MS</option>
+                <option value="MG">MG</option>
+                <option value="PA">PA</option>
+                <option value="PB">PB</option>
+                <option value="PR">PR</option>
+                <option value="PE">PE</option>
+                <option value="PI">PI</option>
+                <option value="RJ">RJ</option>
+                <option value="RN">RN</option>
+                <option value="RS">RS</option>
+                <option value="RO">RO</option>
+                <option value="RR">RR</option>
+                <option value="SC">SC</option>
+                <option value="SP">SP</option>
+                <option value="SE">SE</option>
+                <option value="TO">TO</option>
+              </select>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Bairro"
+              className="input"
+              value={neighborhood}
+              onChange={(e) => setNeighborhood(e.target.value)}
+              disabled={loading}
+            />
+          </div>
 
           <p className={styles.terms}>
             As pessoas que usam nosso serviço podem ter carregado suas informações de contato no Relato Rápido. <a href="#" className={styles.link}>Saiba mais</a>

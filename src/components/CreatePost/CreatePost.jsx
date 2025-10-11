@@ -1,163 +1,141 @@
 import React, { useState } from 'react'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage } from '../../firebase/config'
 import styles from './CreatePost.module.css'
+import { X, Image, MapPin } from 'lucide-react'
+import { useAuth } from '../../contexts/AuthContext'
 
 const CreatePost = ({ onClose, onSubmit }) => {
-  const [postType, setPostType] = useState('text')
+  const { user } = useAuth()
   const [content, setContent] = useState('')
-  const [imageFile, setImageFile] = useState(null)
-  const [imagePreview, setImagePreview] = useState(null)
-  const [uploading, setUploading] = useState(false)
+  const [imageUrl, setImageUrl] = useState('')
+  const [showLocation, setShowLocation] = useState(false)
+  const [customLocation, setCustomLocation] = useState('')
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setImageFile(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-
-    if (postType === 'text' && !content.trim()) {
-      alert('Por favor, escreva algo!')
+    
+    if (!content.trim()) {
+      alert('Escreva algo antes de publicar!')
       return
     }
 
-    if (postType === 'image' && !imageFile) {
-      alert('Por favor, selecione uma imagem!')
-      return
+    const postData = {
+      type: imageUrl ? 'image' : 'text',
+      content: content.trim(),
+      imageUrl: imageUrl || null,
+      location: showLocation 
+        ? (customLocation || `${user.city}, ${user.state}`)
+        : null
     }
 
-    setUploading(true)
-
-    try {
-      let imageUrl = null
-
-      // Upload da imagem para o Firebase Storage
-      if (postType === 'image' && imageFile) {
-        const storageRef = ref(storage, `posts/${Date.now()}_${imageFile.name}`)
-        const snapshot = await uploadBytes(storageRef, imageFile)
-        imageUrl = await getDownloadURL(snapshot.ref)
-      }
-
-      const newPost = {
-        type: postType,
-        content: content.trim(),
-        imageUrl: imageUrl
-      }
-
-      await onSubmit(newPost)
-      
-      setContent('')
-      setImageFile(null)
-      setImagePreview(null)
-    } catch (error) {
-      console.error('Erro ao criar post:', error)
-      alert('Erro ao criar post. Tente novamente.')
-    } finally {
-      setUploading(false)
-    }
+    onSubmit(postData)
+    setContent('')
+    setImageUrl('')
+    setShowLocation(false)
+    setCustomLocation('')
   }
+
+  const hasUserLocation = user.city && user.state
 
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Criar Novo Post</h2>
+          <h2>Criar publicação</h2>
           <button className={styles.closeButton} onClick={onClose}>
-            ✕
+            <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.typeSelector}>
-            <button
-              type="button"
-              className={`${styles.typeButton} ${postType === 'text' ? styles.active : ''}`}
-              onClick={() => setPostType('text')}
-            >
-              📝 Texto
-            </button>
-            <button
-              type="button"
-              className={`${styles.typeButton} ${postType === 'image' ? styles.active : ''}`}
-              onClick={() => setPostType('image')}
-            >
-              🖼️ Imagem
-            </button>
+        <div className={styles.userInfo}>
+          <img src={user.avatar} alt={user.fullName} className={styles.avatar} />
+          <div>
+            <div className={styles.userName}>{user.fullName}</div>
+            {showLocation && (
+              <div className={styles.locationBadge}>
+                <MapPin size={14} />
+                <span>
+                  {customLocation || (hasUserLocation ? `${user.city}, ${user.state}` : 'Adicione uma localização')}
+                </span>
+              </div>
+            )}
           </div>
+        </div>
 
+        <form onSubmit={handleSubmit}>
           <textarea
             className={styles.textarea}
-            placeholder={postType === 'text' ? 'Escreva seu relato...' : 'Adicione uma legenda...'}
+            placeholder={`No que você está pensando, ${user.fullName.split(' ')[0]}?`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={5}
-            disabled={uploading}
+            autoFocus
           />
 
-          {postType === 'image' && (
-            <div className={styles.imageSection}>
-              {!imagePreview ? (
-                <label className={styles.imageLabel}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className={styles.imageInput}
-                    disabled={uploading}
-                  />
-                  <div className={styles.imagePlaceholder}>
-                    📷 Clique para selecionar uma imagem
-                  </div>
-                </label>
-              ) : (
-                <div className={styles.imagePreviewContainer}>
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
-                    className={styles.imagePreview}
-                  />
-                  <button
-                    type="button"
-                    className={styles.removeImageButton}
-                    onClick={() => {
-                      setImageFile(null)
-                      setImagePreview(null)
-                    }}
-                    disabled={uploading}
-                  >
-                    Remover imagem
-                  </button>
-                </div>
-              )}
+          {imageUrl && (
+            <div className={styles.imagePreview}>
+              <img src={imageUrl} alt="Preview" />
+              <button
+                type="button"
+                className={styles.removeImage}
+                onClick={() => setImageUrl('')}
+              >
+                <X size={20} />
+              </button>
             </div>
           )}
 
+          {showLocation && (
+            <div className={styles.locationInput}>
+              <MapPin size={18} />
+              <input
+                type="text"
+                placeholder={hasUserLocation ? `${user.city}, ${user.state}` : "Digite uma localização"}
+                value={customLocation}
+                onChange={(e) => setCustomLocation(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setShowLocation(false)
+                  setCustomLocation('')
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+          )}
+
+          <div className={styles.divider}></div>
+
           <div className={styles.actions}>
-            <button 
-              type="button" 
-              className={styles.cancelButton}
-              onClick={onClose}
-              disabled={uploading}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className={styles.submitButton}
-              disabled={uploading}
-            >
-              {uploading ? 'Publicando...' : 'Publicar'}
-            </button>
+            <span className={styles.addLabel}>Adicionar à publicação:</span>
+            <div className={styles.actionButtons}>
+              <button
+                type="button"
+                className={styles.actionButton}
+                onClick={() => {
+                  const url = prompt('Cole a URL da imagem:')
+                  if (url) setImageUrl(url)
+                }}
+                title="Adicionar foto"
+              >
+                <Image size={24} />
+              </button>
+
+              <button
+                type="button"
+                className={styles.actionButton}
+                onClick={() => setShowLocation(!showLocation)}
+                title="Adicionar localização"
+              >
+                <MapPin size={24} />
+              </button>
+            </div>
           </div>
+
+          <button type="submit" className={styles.submitButton}>
+            Publicar
+          </button>
         </form>
       </div>
     </div>

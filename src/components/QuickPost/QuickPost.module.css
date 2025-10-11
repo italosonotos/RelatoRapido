@@ -1,0 +1,126 @@
+.quickPost {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.inputArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.fakeInput {
+  flex: 1;
+  background: #f0f2f5;
+  border-radius: 50px;
+  padding: 0.75rem 1rem;
+  color: #65676b;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fakeInput:hover {
+  background: #e4e6eb;
+}
+
+.divider {
+  height: 1px;
+  background: #e4e6eb;
+  margin: 1rem 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-around;
+}
+
+.actionButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #65676b;
+  transition: background 0.2s;
+}
+
+.actionButton:hover {
+  background: #f0f2f5;
+}
+
+.iconRed {
+  color: #f3425f;
+}
+
+.iconGreen {
+  color: #45bd62;
+}
+
+.iconYellow {
+  color: #f7b928;
+}
+
+/* Dark mode */
+:global(.dark-mode) .quickPost {
+  background: #242526;
+}
+
+:global(.dark-mode) .fakeInput {
+  background: #3a3b3c;
+  color: #b0b3b8;
+}
+
+:global(.dark-mode) .fakeInput:hover {
+  background: #4e4f50;
+}
+
+:global(.dark-mode) .divider {
+  background: #3a3b3c;
+}
+
+:global(.dark-mode) .actionButton {
+  color: #b0b3b8;
+}
+
+:global(.dark-mode) .actionButton:hover {
+  background: #3a3b3c;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+  }
+  
+  .actionButton {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .actionButton span {
+    display: none;
+  }
+  
+  .actions {
+    flex-direction: row;
+  }
+}
