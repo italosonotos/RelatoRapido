@@ -100,6 +100,20 @@ const Login = () => {
           Não tem uma conta? <Link to="/cadastro" className={styles.signupLink}>Cadastre-se</Link>
         </p>
       </div>
+      <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.875rem' }}>
+  <button 
+    onClick={() => navigate('/terms')}
+    style={{ 
+      background: 'none', 
+      border: 'none', 
+      color: 'var(--color-primary)', 
+      textDecoration: 'underline',
+      cursor: 'pointer'
+    }}
+  >
+    Termos de Uso
+  </button>
+</div>
     </div>
   )
 }

@@ -4,16 +4,15 @@ import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
 
-// Configuração do Firebase
+// Configuração do Firebase com variáveis de ambiente
 const firebaseConfig = {
   apiKey: "AIzaSyA1oZUwAj7LV3j6tiJTp2GMwkDuLw7vwFA",
   authDomain: "relatorapido-7df2d.firebaseapp.com",
   projectId: "relatorapido-7df2d",
   storageBucket: "relatorapido-7df2d.firebasestorage.app",
   messagingSenderId: "486543002311",
-  appId: "1:486543002311:web:8489669ab7cdfc17334ce2",
-  measurementId: "G-Z9QDMPMLYN"
-}
+  appId: "1:486543002311:web:8489669ab7cdfc17334ce2"
+};
 
 // Inicializa o Firebase
 const app = initializeApp(firebaseConfig)

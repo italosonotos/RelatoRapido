@@ -34,6 +34,36 @@ const CreatePost = ({ onClose, onSubmit }) => {
     setCustomLocation('')
   }
 
+  // ⬇️ NOVA FUNÇÃO: Upload de imagem da galeria ⬇️
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    
+    if (file) {
+      // Validar tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas imagens!')
+        return
+      }
+
+      // Validar tamanho (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB!')
+        return
+      }
+
+      // Converter para base64
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImageUrl(reader.result)
+      }
+      reader.onerror = () => {
+        alert('Erro ao carregar a imagem. Tente novamente.')
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+  // ⬆️ FIM DA NOVA FUNÇÃO ⬆️
+
   const hasUserLocation = user.city && user.state
 
   return (
@@ -110,13 +140,20 @@ const CreatePost = ({ onClose, onSubmit }) => {
           <div className={styles.actions}>
             <span className={styles.addLabel}>Adicionar à publicação:</span>
             <div className={styles.actionButtons}>
+              {/* ⬇️ INPUT FILE OCULTO ⬇️ */}
+              <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+              
+              {/* ⬇️ BOTÃO QUE ABRE O SELETOR DE ARQUIVOS ⬇️ */}
               <button
                 type="button"
                 className={styles.actionButton}
-                onClick={() => {
-                  const url = prompt('Cole a URL da imagem:')
-                  if (url) setImageUrl(url)
-                }}
+                onClick={() => document.getElementById('image-upload').click()}
                 title="Adicionar foto"
               >
                 <Image size={24} />

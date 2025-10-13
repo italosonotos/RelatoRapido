@@ -13,7 +13,8 @@ import {
   collection, 
   query, 
   where, 
-  getDocs
+  getDocs,
+  updateDoc
 } from 'firebase/firestore'
 import { auth, db } from '../firebase/config'
 
@@ -35,7 +36,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Busca dados adicionais do usuário no Firestore
         const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
         if (userDoc.exists()) {
           setUser({
@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }) => {
   // Função de cadastro
   const signUp = async ({ email, fullName, username, password, city, state, neighborhood }) => {
     try {
-      // Verifica se o username já existe
       const usersRef = collection(db, 'users')
       const usernameQuery = query(usersRef, where('username', '==', username))
       const usernameSnapshot = await getDocs(usernameQuery)
@@ -65,17 +64,12 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: 'Este nome de usuário já está em uso!' }
       }
 
-      // ⬇️ ESTA LINHA ESTAVA FALTANDO ⬇️
-      // Cria usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const firebaseUser = userCredential.user
-      // ⬆️ ESTA LINHA ESTAVA FALTANDO ⬆️
 
-      // Avatar aleatório
       const avatarNumber = Math.floor(Math.random() * 10) + 1
       const avatar = `https://i.pravatar.cc/150?img=${avatarNumber}`
 
-      // Dados do usuário para o Firestore
       const userData = {
         email,
         fullName,
@@ -88,10 +82,8 @@ export const AuthProvider = ({ children }) => {
         createdAt: new Date().toISOString()
       }
 
-      // Salva dados no Firestore usando o UID do Firebase Auth
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
 
-      // Atualiza o estado
       setUser({
         id: firebaseUser.uid,
         ...userData
@@ -138,6 +130,41 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Atualizar perfil do usuário 
+  const updateUserProfile = async (profileData) => {
+    try {
+      if (!user || !user.id) {
+        throw new Error('Usuário não autenticado')
+      }
+
+      const userRef = doc(db, 'users', user.id)
+      
+      // Atualiza apenas os campos fornecidos
+      await updateDoc(userRef, {
+        fullName: profileData.fullName,
+        username: profileData.username,
+        avatar: profileData.avatar,
+        updatedAt: new Date().toISOString()
+      })
+
+      // Atualiza o estado local
+      setUser({
+        ...user,
+        fullName: profileData.fullName,
+        username: profileData.username,
+        avatar: profileData.avatar
+      })
+
+      return { success: true }
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error)
+      return { 
+        success: false, 
+        error: 'Erro ao atualizar perfil. Tente novamente.' 
+      }
+    }
+  }
+
   // Função de logout
   const signOut = async () => {
     try {
@@ -153,6 +180,7 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signUp,
     signOut,
+    updateUserProfile,  // ← ADICIONE AQUI
     isAuthenticated: !!user
   }
 

@@ -9,6 +9,8 @@ import Home from './components/Home/Home'
 import Feed from './components/Feed/Feed'
 import Profile from './components/Profile/Profile'
 import ProfileEdit from './components/ProfileEdit/ProfileEdit'
+import Terms from './Pages/Terms/Terms'
+import UserProfile from './Pages/UserProfile/UserProfile'
 
 const App = () => {
   return (
@@ -54,6 +56,11 @@ const App = () => {
                 </PrivateRoute>
               } 
             />
+            {/* Rota de perfil de usuário público */}
+          <Route path="/user/:userId" element={<UserProfile />} />
+
+            {/* Rota de Termos de Uso */}
+            <Route path="/terms" element={<Terms />} />
             
             {/* Rota 404 - Página não encontrada */}
             <Route path="*" element={<Navigate to="/" replace />} />

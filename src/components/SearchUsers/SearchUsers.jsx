@@ -50,7 +50,7 @@ const SearchUsers = () => {
   }
 
   const handleUserClick = (userId) => {
-    navigate(`/profile/${userId}`)
+    navigate(`/user/${userId}`) // ← CORRIGIDO
     handleClearSearch()
   }
 

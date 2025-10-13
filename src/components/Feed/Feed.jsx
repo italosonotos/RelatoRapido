@@ -17,7 +17,7 @@ import {
 import { 
   collection, 
   addDoc, 
-  onSnapshot, 
+  onSnapshot,  // ← MUDANÇA: usar onSnapshot em vez de getDocs
   query, 
   orderBy, 
   serverTimestamp,
@@ -35,9 +35,11 @@ const Feed = () => {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
+  // ⬇️ LISTENER EM TEMPO REAL ⬇️
   useEffect(() => {
     const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'))
     
+    // onSnapshot escuta mudanças em tempo real
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const postsData = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -45,8 +47,11 @@ const Feed = () => {
         timestamp: doc.data().timestamp?.toDate() || new Date()
       }))
       setPosts(postsData)
+    }, (error) => {
+      console.error('Erro ao escutar posts:', error)
     })
 
+    // Cleanup: para de escutar quando o componente desmonta
     return () => unsubscribe()
   }, [])
 
@@ -66,6 +71,7 @@ const Feed = () => {
         imageUrl: newPost.imageUrl,
         location: newPost.location,
         likes: [],
+        comments: [], // ← Inicializa com array vazio
         timestamp: serverTimestamp()
       })
       
@@ -117,8 +123,6 @@ const Feed = () => {
       await updateDoc(postRef, {
         comments: arrayUnion(newComment)
       })
-      
-      console.log('Comentário adicionado com sucesso!')
     } catch (error) {
       console.error('Erro ao adicionar comentário:', error)
       alert('Erro ao adicionar comentário. Tente novamente.')
@@ -128,7 +132,6 @@ const Feed = () => {
   const handleDeletePost = async (postId) => {
     try {
       await deleteDoc(doc(db, 'posts', postId))
-      console.log('Post deletado com sucesso!')
     } catch (error) {
       console.error('Erro ao deletar post:', error)
       alert('Erro ao deletar o post. Tente novamente.')
@@ -140,7 +143,6 @@ const Feed = () => {
       <div className={styles.header}>
         <h1 className={styles.logo}>Relato Rápido</h1>
         
-        {/* Barra de pesquisa no header */}
         <SearchUsers />
         
         <div className={styles.headerActions}>
@@ -190,7 +192,6 @@ const Feed = () => {
       )}
 
       <div className={styles.feed}>
-        {/* Campo "No que você está pensando?" */}
         <QuickPost onOpenCreatePost={() => setShowCreatePost(true)} />
 
         {posts.length === 0 ? (
