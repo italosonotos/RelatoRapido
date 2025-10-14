@@ -33,11 +33,9 @@ const Login = () => {
       setLoading(true)
       const result = await signIn(email, password)
       
-      if (result.success) {
-        navigate('/feed')
-      } else {
-        setError(result.error)
-      }
+      if (!result.success) {
+      setError(result.error)
+    }
     } catch {
       setError('Ocorreu um erro ao fazer login. Tente novamente.')
     } finally {
