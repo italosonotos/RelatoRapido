@@ -36,13 +36,17 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
-        if (userDoc.exists()) {
-          setUser({
-            id: firebaseUser.uid,
-            email: firebaseUser.email,
-            ...userDoc.data()
-          })
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
+          if (userDoc.exists()) {
+            setUser({
+              id: firebaseUser.uid,
+              email: firebaseUser.email,
+              ...userDoc.data()
+            })
+          }
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error)
         }
       } else {
         setUser(null)
@@ -55,6 +59,8 @@ export const AuthProvider = ({ children }) => {
 
   // Função de cadastro
   const signUp = async ({ email, fullName, username, password, city, state, neighborhood }) => {
+    let firebaseUser = null
+    
     try {
       const usersRef = collection(db, 'users')
       const usernameQuery = query(usersRef, where('username', '==', username))
@@ -64,8 +70,12 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: 'Este nome de usuário já está em uso!' }
       }
 
+      // 1. Cria o usuário no Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      const firebaseUser = userCredential.user
+      firebaseUser = userCredential.user
+
+      // 2. Aguarda um pouco para garantir que o token foi propagado
+      await new Promise(resolve => setTimeout(resolve, 500))
 
       const avatarNumber = Math.floor(Math.random() * 10) + 1
       const avatar = `https://i.pravatar.cc/150?img=${avatarNumber}`
@@ -82,6 +92,7 @@ export const AuthProvider = ({ children }) => {
         createdAt: new Date().toISOString()
       }
 
+      // 3. Salva os dados no Firestore
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
 
       setUser({
@@ -93,6 +104,15 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Erro no cadastro:', error)
       
+      // Se criou usuário no Auth mas falhou no Firestore, tenta deletar
+      if (firebaseUser) {
+        try {
+          await firebaseUser.delete()
+        } catch (deleteError) {
+          console.error('Erro ao limpar usuário:', deleteError)
+        }
+      }
+      
       let errorMessage = 'Erro ao criar conta. Tente novamente.'
       
       if (error.code === 'auth/email-already-in-use') {
@@ -101,6 +121,8 @@ export const AuthProvider = ({ children }) => {
         errorMessage = 'Email inválido!'
       } else if (error.code === 'auth/weak-password') {
         errorMessage = 'A senha deve ter no mínimo 6 caracteres!'
+      } else if (error.code === 'permission-denied') {
+        errorMessage = 'Erro de permissão no banco de dados. Verifique as configurações do Firebase.'
       }
       
       return { 
@@ -113,7 +135,20 @@ export const AuthProvider = ({ children }) => {
   // Função de login
   const signIn = async (email, password) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      
+      // Aguarda buscar os dados do usuário antes de retornar sucesso
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid))
+      
+      if (userDoc.exists()) {
+        const userData = {
+          id: userCredential.user.uid,
+          email: userCredential.user.email,
+          ...userDoc.data()
+        }
+        setUser(userData)
+      }
+      
       return { success: true }
     } catch (error) {
       let errorMessage = 'Erro ao fazer login'
@@ -169,6 +204,7 @@ export const AuthProvider = ({ children }) => {
   const signOut = async () => {
     try {
       await firebaseSignOut(auth)
+      setUser(null)
     } catch (error) {
       console.error('Erro ao fazer logout:', error)
     }
@@ -180,7 +216,7 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signUp,
     signOut,
-    updateUserProfile,  // ← ADICIONE AQUI
+    updateUserProfile,
     isAuthenticated: !!user
   }
 

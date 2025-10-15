@@ -9,6 +9,7 @@ import SearchUsers from '../SearchUsers/SearchUsers'
 import GoogleAd from '../GoogleAd/GoogleAd'
 import { useAuth } from '../../contexts/AuthContext'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
+import NotificationBell from '../NotificationBell/NotificationBell'
 import { 
   Plus, 
   LogOut, 
@@ -157,13 +158,8 @@ const Feed = () => {
               <Plus size={20} />
             </button>
             
-            <button 
-              className={styles.iconButton}
-              onClick={() => navigate('/profile')}
-              title="Perfil"
-            >
-              <User size={20} />
-            </button>
+            <NotificationBell />
+
             
             <button 
               className={styles.iconButton}

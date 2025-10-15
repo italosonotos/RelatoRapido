@@ -12,6 +12,7 @@ import Profile from './components/Profile/Profile'
 import ProfileEdit from './components/ProfileEdit/ProfileEdit'
 import Terms from './Pages/Terms/Terms'
 import UserProfile from './Pages/UserProfile/UserProfile'
+import Notifications from './components/Notifications/Notifications'
 
 const AppContent = () => {
   const { user, loading } = useAuth()
@@ -67,6 +68,9 @@ const AppContent = () => {
 
       {/* Rota pública - Perfil de outro usuário */}
       <Route path="/user/:userId" element={<UserProfile />} />
+
+      {/* Rota protegida - Notificações */}
+      <Route path="/notifications" element={<Notifications />} />
 
       {/* Rota de Termos de Uso */}
       <Route path="/terms" element={<Terms />} />

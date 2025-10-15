@@ -1,0 +1,190 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border, #dbdbdb);
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary, #262626);
+  transition: opacity 0.2s;
+  border-radius: 50%;
+}
+
+.backButton:hover {
+  opacity: 0.6;
+  background-color: var(--color-background-hover, #f0f0f0);
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.markAllButton {
+  background: none;
+  border: none;
+  color: var(--color-primary, #0095f6);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.markAllButton:hover {
+  color: var(--color-primary-dark, #00376b);
+}
+
+.loading, .empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--color-text-secondary, #8e8e8e);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.emptyIcon {
+  color: var(--color-text-secondary, #8e8e8e);
+  opacity: 0.5;
+}
+
+.empty h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text-primary, #262626);
+}
+
+.empty p {
+  margin: 0;
+  font-size: 0.875rem;
+  max-width: 300px;
+}
+
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.notificationItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--color-border, #efefef);
+  position: relative;
+}
+
+.notificationItem:hover {
+  background-color: var(--color-background-hover, #fafafa);
+}
+
+.notificationItem.unread {
+  background-color: var(--color-background-unread, #f0f8ff);
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--color-text-primary, #262626);
+}
+
+.message strong {
+  font-weight: 600;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #8e8e8e);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.postThumbnail {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary, #0095f6);
+  border-radius: 50%;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+
+  .header {
+    padding: 1rem;
+    margin-bottom: 0;
+  }
+
+  .notificationItem {
+    padding: 0.875rem 1rem;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .postThumbnail {
+    width: 40px;
+    height: 40px;
+  }
+}

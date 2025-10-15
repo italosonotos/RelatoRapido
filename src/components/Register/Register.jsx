@@ -2,67 +2,78 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Register.module.css'
 import { useAuth } from '../../contexts/AuthContext'
+import { validateUser } from '../../Utils/validation.js'
 
 const Register = () => {
-  const [email, setEmail] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [city, setCity] = useState('')
-  const [state, setState] = useState('')
-  const [neighborhood, setNeighborhood] = useState('')
-  const [error, setError] = useState('')
+  const [formData, setFormData] = useState({
+    email: '',
+    fullName: '',
+    username: '',
+    password: '',
+    city: '',
+    state: '',
+    neighborhood: ''
+  })
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
   const { signUp } = useAuth()
 
+  // Handler unificado para mudanças nos inputs
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    
+    // Limpa erro específico do campo quando usuário começa a digitar
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (loading) return
     
-    setError('')
+    // Limpa erros anteriores
+    setErrors({})
 
-    if (!email || !fullName || !username || !password) {
-      setError('Por favor, preencha todos os campos obrigatórios!')
+    // Validação usando a função centralizada
+    const validation = validateUser(formData)
+
+    if (!validation.isValid) {
+      setErrors(validation.errors)
       return
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      setError('Por favor, insira um email válido!')
-      return
-    }
-
-    if (password.length < 6) {
-      setError('A senha deve ter no mínimo 6 caracteres!')
-      return
-    }
-
-    if (username.length < 3) {
-      setError('O nome de usuário deve ter no mínimo 3 caracteres!')
-      return
-    }
-
+    // Prossegue com o cadastro
     try {
       setLoading(true)
       const result = await signUp({ 
-        email, 
-        fullName, 
-        username, 
-        password,
-        city: city || null,
-        state: state || null,
-        neighborhood: neighborhood || null
+        email: formData.email, 
+        fullName: formData.fullName, 
+        username: formData.username, 
+        password: formData.password,
+        city: formData.city || null,
+        state: formData.state || null,
+        neighborhood: formData.neighborhood || null
       })
       
       if (result.success) {
         navigate('/feed')
       } else {
-        setError(result.error)
+        setErrors({ general: result.error })
       }
     } catch {
-      setError('Ocorreu um erro ao criar sua conta. Tente novamente.')
+      setErrors({ general: 'Ocorreu um erro ao criar sua conta. Tente novamente.' })
     } finally {
       setLoading(false)
     }
@@ -79,9 +90,10 @@ const Register = () => {
           Cadastre-se para compartilhar seus relatos com amigos.
         </p>
 
-        {error && (
+        {/* Erro geral (do backend) */}
+        {errors.general && (
           <div className="alert alert-error">
-            {error}
+            {errors.general}
           </div>
         )}
 
@@ -90,41 +102,69 @@ const Register = () => {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.formContainer}>
-          <input
-            type="email"
-            placeholder="Email"
-            className={`input ${error ? 'input-error' : ''}`}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-          />
+          {/* Email */}
+          <div className={styles.inputGroup}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              className={`input ${errors.email ? 'input-error' : ''}`}
+              value={formData.email}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.email && (
+              <span className={styles.errorText}>{errors.email}</span>
+            )}
+          </div>
 
-          <input
-            type="text"
-            placeholder="Nome completo"
-            className={`input ${error ? 'input-error' : ''}`}
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            disabled={loading}
-          />
+          {/* Nome completo */}
+          <div className={styles.inputGroup}>
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Nome completo"
+              className={`input ${errors.fullName ? 'input-error' : ''}`}
+              value={formData.fullName}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.fullName && (
+              <span className={styles.errorText}>{errors.fullName}</span>
+            )}
+          </div>
           
-          <input
-            type="text"
-            placeholder="Nome de usuário"
-            className={`input ${error ? 'input-error' : ''}`}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={loading}
-          />
+          {/* Username */}
+          <div className={styles.inputGroup}>
+            <input
+              type="text"
+              name="username"
+              placeholder="Nome de usuário"
+              className={`input ${errors.username ? 'input-error' : ''}`}
+              value={formData.username}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.username && (
+              <span className={styles.errorText}>{errors.username}</span>
+            )}
+          </div>
           
-          <input
-            type="password"
-            placeholder="Senha"
-            className={`input ${error ? 'input-error' : ''}`}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
+          {/* Senha */}
+          <div className={styles.inputGroup}>
+            <input
+              type="password"
+              name="password"
+              placeholder="Senha"
+              className={`input ${errors.password ? 'input-error' : ''}`}
+              value={formData.password}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.password && (
+              <span className={styles.errorText}>{errors.password}</span>
+            )}
+          </div>
 
           {/* Campos de localização (opcionais) */}
           <div className={styles.locationSection}>
@@ -135,17 +175,19 @@ const Register = () => {
             <div className={styles.locationRow}>
               <input
                 type="text"
+                name="city"
                 placeholder="Cidade"
                 className="input"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                value={formData.city}
+                onChange={handleChange}
                 disabled={loading}
               />
 
               <select
+                name="state"
                 className="input"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
+                value={formData.state}
+                onChange={handleChange}
                 disabled={loading}
               >
                 <option value="">Estado</option>
@@ -181,10 +223,11 @@ const Register = () => {
 
             <input
               type="text"
+              name="neighborhood"
               placeholder="Bairro"
               className="input"
-              value={neighborhood}
-              onChange={(e) => setNeighborhood(e.target.value)}
+              value={formData.neighborhood}
+              onChange={handleChange}
               disabled={loading}
             />
           </div>
@@ -212,20 +255,21 @@ const Register = () => {
           Tem uma conta? <Link to="/login" className={styles.loginLink}>Conecte-se</Link>
         </p>
       </div>
+      
       <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.875rem' }}>
-  <button 
-    onClick={() => navigate('/terms')}
-    style={{ 
-      background: 'none', 
-      border: 'none', 
-      color: 'var(--color-primary)', 
-      textDecoration: 'underline',
-      cursor: 'pointer'
-    }}
-  >
-    Termos de Uso
-  </button>
-</div>
+        <button 
+          onClick={() => navigate('/terms')}
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'var(--color-primary)', 
+            textDecoration: 'underline',
+            cursor: 'pointer'
+          }}
+        >
+          Termos de Uso
+        </button>
+      </div>
     </div>
   )
 }
